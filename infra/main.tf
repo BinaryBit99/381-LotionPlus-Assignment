@@ -21,7 +21,10 @@ locals {
   delete_note_handler_name  = "main.delete_handler"
   get_notes_handler_name = "main.get_handler"
   save_note_handler_name = "main.save_handler"
-  artifact_name = "${local.function_name}/artifact.zip"
+  delete_artifact_name = "${local.delete_function_name}/artifact.zip"
+  get_artifact_name = "${local.get_function_name}/artifact.zip"
+  save_artifact_name = "${local.save_function_name}/artifact.zip"
+#   artifact_name = "${local.function_name}/artifact.zip"
 }
 
 # Create an S3 bucket
@@ -34,8 +37,46 @@ resource "aws_s3_bucket" "lambda" {}
 # then any policy attached to the role will give permissions
 # to the service so it can interact with other AWS services
 # see the docs: https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role
-resource "aws_iam_role" "lambda" {
-  name               = "iam-for-lambda-${local.function_name}"
+resource "aws_iam_role" "delete_role" {
+  name               = "iam-for-lambda-${local.delete_function_name}"
+  assume_role_policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Action": "sts:AssumeRole",
+      "Principal": {
+        "Service": "lambda.amazonaws.com"
+      },
+      "Effect": "Allow",
+      "Sid": ""
+    }
+  ]
+}
+EOF
+}
+
+resource "aws_iam_role" "get_role" {
+  name               = "iam-for-lambda-${local.get_function_name}"
+  assume_role_policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Action": "sts:AssumeRole",
+      "Principal": {
+        "Service": "lambda.amazonaws.com"
+      },
+      "Effect": "Allow",
+      "Sid": ""
+    }
+  ]
+}
+EOF
+}
+
+resource "aws_iam_role" "save_role" {
+  name               = "iam-for-lambda-${local.save_function_name}"
   assume_role_policy = <<EOF
 {
   "Version": "2012-10-17",
@@ -55,23 +96,23 @@ EOF
 
 # create a Lambda function
 # see the docs: https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lambda_function
-resource "aws_lambda_function" "get-notes-<UCID>" {
+resource "aws_lambda_function" "get-notes-30147741" {
   s3_bucket = aws_s3_bucket.lambda.bucket
   # the artifact needs to be in the bucket first. Otherwise, this will fail.
-  s3_key        = local.artifact_name
-  role          = aws_iam_role.lambda.arn
-  function_name = local.delete_function_name
+  s3_key        = local.get_artifact_name
+  role          = aws_iam_role.get_role.arn
+  function_name = local.get_function_name
   handler       = local.get_notes_handler_name
 
   # see all available runtimes here: https://docs.aws.amazon.com/lambda/latest/dg/API_CreateFunction.html#SSS-CreateFunction-request-Runtime
   runtime = "python3.9"
 }
 
-resource "aws_lambda_function" "save-note-<UCID>" {
+resource "aws_lambda_function" "save-note-30147741" {
   s3_bucket = aws_s3_bucket.lambda.bucket
   # the artifact needs to be in the bucket first. Otherwise, this will fail.
-  s3_key        = local.artifact_name
-  role          = aws_iam_role.lambda.arn
+  s3_key        = local.save_artifact_name
+  role          = aws_iam_role.save_role.arn
   function_name = local.save_function_name
   handler       = local.save_note_handler_name
 
@@ -79,11 +120,11 @@ resource "aws_lambda_function" "save-note-<UCID>" {
   runtime = "python3.9"
 }
 
-resource "aws_lambda_function" "delete-note-<UCID>" {
+resource "aws_lambda_function" "delete-note-30147741" {
   s3_bucket = aws_s3_bucket.lambda.bucket
   # the artifact needs to be in the bucket first. Otherwise, this will fail.
-  s3_key        = local.artifact_name 
-  role          = aws_iam_role.lambda.arn
+  s3_key        = local.delete_artifact_name 
+  role          = aws_iam_role.delete_role.arn
   function_name = local.delete_function_name
   handler       = local.delete_note_handler_name
 
@@ -96,7 +137,7 @@ resource "aws_lambda_function" "delete-note-<UCID>" {
 # create a policy for publishing logs to CloudWatch
 # see the docs: https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_policy
 resource "aws_iam_policy" "logs" {
-  name        = "lambda-logging-${local.function_name}"
+  name        = "lambda-logging-functions"
   description = "IAM policy for logging from a lambda"
 
   policy = <<EOF
@@ -117,22 +158,76 @@ resource "aws_iam_policy" "logs" {
 EOF
 }
 
+# resource "aws_iam_policy" "save_logs" {
+#   name        = "lambda-logging-${local.save_function_name}"
+#   description = "IAM policy for logging from a lambda"
+
+#   policy = <<EOF
+# {
+#   "Version": "2012-10-17",
+#   "Statement": [
+#     {
+#       "Action": [
+#         "logs:CreateLogGroup",
+#         "logs:CreateLogStream",
+#         "logs:PutLogEvents"
+#       ],
+#       "Resource": "arn:aws:logs:*:*:*",
+#       "Effect": "Allow"
+#     }
+#   ]
+# }
+# EOF
+# }
+
+# resource "aws_iam_policy" "get_logs" {
+#   name        = "lambda-logging-${local.get_function_name}"
+#   description = "IAM policy for logging from a lambda"
+
+#   policy = <<EOF
+# {
+#   "Version": "2012-10-17",
+#   "Statement": [
+#     {
+#       "Action": [
+#         "logs:CreateLogGroup",
+#         "logs:CreateLogStream",
+#         "logs:PutLogEvents"
+#       ],
+#       "Resource": "arn:aws:logs:*:*:*",
+#       "Effect": "Allow"
+#     }
+#   ]
+# }
+# EOF
+# }
+
 # attach the above policy to the function role
 # see the docs: https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment
-resource "aws_iam_role_policy_attachment" "lambda_logs" {
-  role       = aws_iam_role.lambda.name
+resource "aws_iam_role_policy_attachment" "save_logs_attachment" {
+  role       = aws_iam_role.save_role.name
+  policy_arn = aws_iam_policy.logs.arn
+}
+
+resource "aws_iam_role_policy_attachment" "delete_logs_attachment" {
+  role       = aws_iam_role.delete_role.name
+  policy_arn = aws_iam_policy.logs.arn
+}
+
+resource "aws_iam_role_policy_attachment" "get_logs_attachment" {
+  role       = aws_iam_role.get_role.name
   policy_arn = aws_iam_policy.logs.arn
 }
 
 # output the name of the bucket after creation
-# output "bucket_name" {
-#   value = aws_s3_bucket.lambda.bucket
-# }
+output "bucket_name" {
+  value = aws_s3_bucket.lambda.bucket
+}
 
 # create a Function URL for Lambda 
 # see the docs: https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lambda_function_url
 resource "aws_lambda_function_url" "save-url" {
-  function_name      = aws_lambda_function.save-note-<UCID>.function_name
+  function_name      = aws_lambda_function.save-note-30147741.function_name
   authorization_type = "NONE"
 
   cors {
@@ -146,7 +241,7 @@ resource "aws_lambda_function_url" "save-url" {
 
 
 resource "aws_lambda_function_url" "delete-url" {
-  function_name      = aws_lambda_function.delete-note-<UCID>.function_name
+  function_name      = aws_lambda_function.delete-note-30147741.function_name
   authorization_type = "NONE"
 
   cors {
@@ -159,7 +254,7 @@ resource "aws_lambda_function_url" "delete-url" {
 }
 
 resource "aws_lambda_function_url" "get-notes-url" {
-  function_name      = aws_lambda_function.get-notes-<UCID>.function_name
+  function_name      = aws_lambda_function.get-notes-30147741.function_name
   authorization_type = "NONE"
 
   cors {
@@ -186,8 +281,8 @@ output "save_note_url_output" {
 
 
 # read the docs: https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/dynamodb_table
-resource "aws_dynamodb_table" "table-<UCID>" {
-  name         = "students"
+resource "aws_dynamodb_table" "table-30146985" {
+  name         = "lotion"
   billing_mode = "PROVISIONED"
 
   # up to 8KB read per second (eventually consistent)
@@ -203,16 +298,12 @@ resource "aws_dynamodb_table" "table-<UCID>" {
 
   # the hash_key data type is string
   attribute {
-    name = "title"
+    name = "email"
     type = "S"
   }
 
   attribute {
-    name = "text"
-    type = "S"
-  }
-  attribute {
-    name = "date"
+    name = "id"
     type = "S"
   }
 }
