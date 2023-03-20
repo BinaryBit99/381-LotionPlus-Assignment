@@ -9,10 +9,7 @@ table = dynamodb_resource.Table("lotion")
 def delete_handler(event, context):
     body = event["body"]
     try:
-        table.delete_item(
-            Key={
-                "id": body["id"],
-            }
+        table.delete_item(Key={"id": body["id"]})
 
         return {
             "statusCode": 200,
@@ -20,6 +17,7 @@ def delete_handler(event, context):
                     "message": "success"
             })
         }
+        
     except Exception as exp:
         print(f"exception: {exp}")
         return {
