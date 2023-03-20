@@ -1,6 +1,7 @@
 # add your delete-note function here
 
 import json 
+import boto3
 
 def delete_handler(event, context):
     http_method = event["requestContext"]["http"]["method"].lower()
