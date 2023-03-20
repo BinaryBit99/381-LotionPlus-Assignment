@@ -3,18 +3,28 @@
 import json 
 import boto3
 
-def delete_handler(event, context):
-    http_method = event["requestContext"]["http"]["method"].lower()
-    invoker = None
+dynamodb_resource = boto3.resource("dynamodb")
+table = dynamodb_resource.Table("lotion")
 
-    if http_method == "delete":
-        # DELETE use query string parameters to get info about the request
-        invoker = event["queryStringParameters"]["invoker"]
-    
-    return {
-        "statusCode": 200,
-        "body": json.dumps({
-            "method": http_method,
-            "invoker": invoker
-        })
-    }
+def delete_handler(event, context):
+    body = event["body"]
+    try:
+        table.delete_item(
+            Key={
+                "id": body["id"],
+            }
+
+        return {
+            "statusCode": 200,
+            "body": json.dumps({
+                    "message": "success"
+            })
+        }
+    except Exception as exp:
+        print(f"exception: {exp}")
+        return {
+            "statusCode": 500,
+                "body": json.dumps({
+                    "message":str(exp)
+            })
+        }
