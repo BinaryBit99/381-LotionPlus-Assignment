@@ -1,21 +1,26 @@
-# add your save-note function here
+import json 
+import boto3
 
-# add your save-note function here
-import json
+dynamodb_resource = boto3.resource("dynamodb")
+table = dynamodb_resource.Table("lotion")
 
-def save_handler(event, context):
-    http_method = event["requestContext"]["http"]["method"].lower()
-    invoker = None
+def lambda_handler(event, context):
 
-    if http_method == "post" or http_method == "put":
-        # POST and PUT use the request body to get info about the request
-        body = json.loads(event["body"])
-        invoker = body["invoker"]
+    body = json.loads(event["body"])
+    try:
+        table.put_item(Item=body)
+        return {
+            "statusCode": 200,
+                "body": json.dumps({
+                    "message": "success"
+                })
+        }
 
-    return {
-        "statusCode": 200,
-        "body": json.dumps({
-            "method": http_method,
-            "invoker": invoker
-        })
-    }
+    except Exception as exp:
+        print(f"exception: {exp}")
+        return {
+            "statusCode": 500,
+                "body": json.dumps({
+                    "message":str(exp)
+            })
+        }
