@@ -19,7 +19,6 @@ def delete_handler(event, context):
         }
         
     except Exception as exp:
-        print(f"exception: {exp}")
         return {
             "statusCode": 500,
                 "body": json.dumps({
