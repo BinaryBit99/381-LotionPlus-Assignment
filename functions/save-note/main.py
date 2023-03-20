@@ -4,7 +4,7 @@ import boto3
 dynamodb_resource = boto3.resource("dynamodb")
 table = dynamodb_resource.Table("lotion")
 
-def lambda_handler(event, context):
+def save_handler(event, context):
 
     body = json.loads(event["body"])
     try:
