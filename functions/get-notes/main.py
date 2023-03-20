@@ -1,19 +1,30 @@
 # add your get-notes function here
 
 import json
+import boto3
+
+dynamodb_resource = boto3.resource("dynamodb")
+table = dynamodb_resource.Table("lotion")
 
 def get_handler(event, context):
-    http_method = event["requestContext"]["http"]["method"].lower()
-    invoker = None
+    body = event["body"]
+    try:
+        table.get_item(Key={"email": body["email"]})
+        return {
+            "statusCode": 200,
+                "body": json.dumps({
+                    "message": "success"
+                })
+        }
+    except Exception as exp:
+        print(f"exception: {exp}")
+        return {
+            "statusCode": 500,
+                "body": json.dumps({
+                    "message":str(exp)
+            })
+        }
 
-    if http_method == "get":
-        # GET use query string parameters to get info about the request
-        invoker = event["queryStringParameters"]["invoker"]
-    
-    return {
-        "statusCode": 200,
-        "body": json.dumps({
-            "method": http_method,
-            "invoker": invoker
-        })
-    }
+    response = table.get_item(Key={"student_id": student_id})
+    item = response["Item"]
+    return item
