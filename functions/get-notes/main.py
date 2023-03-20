@@ -24,7 +24,3 @@ def get_handler(event, context):
                     "message":str(exp)
             })
         }
-
-    response = table.get_item(Key={"student_id": student_id})
-    item = response["Item"]
-    return item
