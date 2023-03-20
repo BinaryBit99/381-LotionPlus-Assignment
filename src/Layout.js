@@ -6,6 +6,8 @@ import { v4 as uuidv4 } from "uuid";
 import { googleLogout, useGoogleLogin, GoogleLogin } from '@react-oauth/google';
 import axios from 'axios';
 
+
+
 function Layout() {
   const navigate = useNavigate();
   const LOCAL_STORAGE_KEY = "notesApp.notes";
@@ -18,9 +20,11 @@ function Layout() {
       return storedNotes;
     }
   });
-
+  const [lockedbar, setLockedbar] = useState(false);
   const [sidebar, setSidebar] = useState(false);
-  const showSidebar = () => setSidebar(!sidebar);
+  function showSidebar() {
+    lockedbar ? (sidebar ? setSidebar(false) : setSidebar(false)) : setSidebar(!sidebar) ;
+  }
   function addNote() {
     const id = uuidv4();
     setNotes((prevNotes) => {
@@ -28,25 +32,25 @@ function Layout() {
     });
     navigate("notes/" + id + "/edit");
   }
-
   useEffect(() => {
     if (Object.keys(params).length === 0){
       navigate("/notes");
     }
   }, []);
-
   useEffect(() => {
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(notes));
   }, [notes]);
-
   const [ user, setUser ] = useState([]);
   const [ profile, setProfile ] = useState([]);
-
   const login = useGoogleLogin({
       onSuccess: (codeResponse) => setUser(codeResponse),
-      onError: (error) => console.log('Login Failed:', error)
+      onError: (error) => console.log('Login Failed:', error),
   });
-
+  useEffect ( 
+    () => {
+      <Outlet context={[lockedbar, setLockedbar]} /> 
+    }, [ lockedbar ]
+  )
   useEffect(
     () => {
         if (user) {
@@ -59,43 +63,44 @@ function Layout() {
                 })
                 .then((res) => {
                     setProfile(res.data);
+                    setLockedbar(false);
                 })
                 .catch((err) => console.log(err));
+      
         }
     },
     [ user ]
   );
-
-
+  const lockOut = () => setLockedbar(lockedbar);
+  const reDirect = () => {login();}
 // log out function to log the user out of google and set the profile array to null
   const logOut = () => {
+      setLockedbar(true);
       googleLogout();
       setProfile(null);
   };
-
+  const handleLogOut = () => {
+    navigate("/");
+    logOut();
+  }
   return (
-    
     <>
       <div id="title">
         <h1>Lotion</h1>
         <p>Like Notion, but worse (like way worse)</p>
-        <p>React Google Login</p>
-            
-            {profile ? (
-                <div className="userLogin">
-          
+      </div>
+      <label id="menu" onClick={showSidebar} >
+        &#9776;
+        <div id="userLogin">
+        {profile ? (
+                <div className="welcome">
                     <p> Welcome back, {profile.name}</p>
-                    <p>Email Address: {profile.email}</p>
-                   
-                    <button onClick={logOut}>Log out</button>
+                    <label onClick={handleLogOut}>Log out</label>
                 </div>
             ) : (
-                <button onClick={() => login()}>Sign in with Google 🚀 </button>
-            )}
-      
-      </div>
-      <label id="menu" onClick={showSidebar}>
-        &#9776;
+                <button id="signIn" onClick={reDirect}>Sign in with Google</button>
+        )}
+        </div>
       </label>
       <nav className={sidebar ? "nav-menu active" : "nav-menu"}>
         <div id="head">
@@ -104,7 +109,7 @@ function Layout() {
           </label>
         </div>
         <div className="nav-menu-items">
-          <NotesList notes={notes} />
+          <NotesList notes={notes} /> 
         </div>
       </nav>
       <div className={sidebar ? "content menuActive" : "content"}>
