@@ -8,13 +8,7 @@ import EditNote from "./EditNote"
 import ViewNote from "./ViewNote"
 
 export default function App() {
-  // const [email, setEmail] = useState(""); 
-  // const [user, setUser] = useState("batman@uofc.ca");
-  // const [notes, setNotes] = useState([]);
-  // const [title, setTitle] = useState("");
-  // const [body, setBody] = useState("");
-  // const [when, setWhen] = useState("");
-
+  
   // const onSaveNote = async () => {
   //   const newNote = {title, body, when, id: uuidv4()}
   //   console.log({...newNote, email: user})

@@ -7,10 +7,9 @@ dynamodb_resource = boto3.resource("dynamodb")
 table = dynamodb_resource.Table("lotion-30146985")
 
 def delete_handler(event, context):
-    body = json.loads(event["body"])
-    print(body)
+    queryParameters = event["queryStringParameters"]
     try:
-        table.delete_item(Key=body)
+        table.delete_item(Key=queryParameters)
 
         return {
             "statusCode": 200,

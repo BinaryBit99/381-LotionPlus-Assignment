@@ -15,21 +15,36 @@ export default function ViewNote() {
   async function handleDelete() {
     const answer = window.confirm("Are you sure?");
     if (answer) {
-      notes = notes.filter((note) => note.id !== id);
-      setNotes(notes);
-      navigate("/notes/");
 
-      const res = await fetch("https://tcqizbv2ojmo2fuz2pzyxejrbi0pwvot.lambda-url.ca-central-1.on.aws/", 
+      const res = await fetch(`https://5mxgpu73xqbgivscagw733qhyq0lzbdy.lambda-url.ca-central-1.on.aws?id=${id}&email=${"batman@uofc.ca"}`, 
         {
           method: "DELETE",
           mode: "cors",
           headers: {
             "Content-Type": "application/json"
           },
-          body: JSON.stringify({id: id, email: "batman@uofc.ca"})
         }
       )
       console.log(res)
+
+      if (res.status == 200) {
+        notes = notes.filter((note) => note.id !== id);
+        setNotes(notes);
+        navigate("/notes/");
+      }
+
+      const res2 = await fetch(`https://ghszrazwk3juwqtg4m2jdhnvgu0rxjyc.lambda-url.ca-central-1.on.aws?email=${"batman@uofc.ca"}`, 
+        {
+          method: "GET",
+          mode: "cors",
+          headers: {
+            "Content-Type": "application/json"
+          }
+        }
+      )
+
+      const jsonRes = await res2.json()
+      console.log(jsonRes.notes.Items)
 
     }
 

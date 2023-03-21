@@ -48,68 +48,53 @@ export default function EditNote() {
   async function handleDelete() {
     const answer = window.confirm("Are you sure?");
     if (answer) {
-      notes = notes.filter((note) => note.id !== id);
-      setNotes(notes);
-      navigate("/notes/");
 
-      const res = await fetch("https://tcqizbv2ojmo2fuz2pzyxejrbi0pwvot.lambda-url.ca-central-1.on.aws/", 
+      const res = await fetch(`https://5mxgpu73xqbgivscagw733qhyq0lzbdy.lambda-url.ca-central-1.on.aws?id=${id}&email=${"batman@uofc.ca"}`, 
         {
           method: "DELETE",
           mode: "cors",
           headers: {
             "Content-Type": "application/json"
           },
-          body: JSON.stringify({id: id, email: "batman@uofc.ca"})
         }
       )
+
       console.log(res)
+
+      if (res.status == 200) {
+        notes = notes.filter((note) => note.id !== id);
+        setNotes(notes);
+        navigate("/notes/");
+      }
     }
 
 
 
   }
 
-    // const onSaveNote = async () => {
-  //   const newNote = {title, body, when, id: uuidv4()}
-  //   console.log({...newNote, email: user})
-  //   setNotes([{...newNote}, ...notes]);
-
-  //   const res = await fetch("https://fgaeb676p2fzzzfxz3r43oj3cq0mmkmr.lambda-url.ca-central-1.on.aws/", 
-  //     {
-  //       method: "POST",
-  //       mode: "cors",
-  //       headers: {
-  //         "Content-Type": "application/json"
-  //       },
-  //       body: JSON.stringify({...newNote, email: user})
-  //     }
-  //   )
-  //   console.log(res)
-  // }
-
   async function handleSave() {
-    curNote.date = formatDate(date);
-    curNote.text = value;
-    curNote.title = title;
-    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(notes));
-    navigate("/notes/" + id);
+    const savedNote = {id: id, title: title, text: value, date: formatDate(date)};
 
-    // const newNote = { id: id, title: "Untitled", text: "...", date: "" };
-    // body: JSON.stringify({...newNote, email: "batman@uofc.ca"})
-
-    const res = await fetch("https://lhsm33sa5oaklh5w5juvv2jfji0ygaut.lambda-url.ca-central-1.on.aws/", 
+    const res = await fetch("https://t6tmufd7d6v5jdva4s2pa7rsfe0mznte.lambda-url.ca-central-1.on.aws/", 
       {
         method: "POST",
         mode: "cors",
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({...curNote, email: "batman@uofc.ca"})
+        body: JSON.stringify({...savedNote, email: "batman@uofc.ca"})
         
       }
     )
-  console.log(res)
+    console.log(res)
 
+    if(res.status == 200) {
+      curNote.date = formatDate(date);
+      curNote.text = value;
+      curNote.title = title;
+      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(notes));
+      navigate("/notes/" + id);
+    }
   }
 
   return (

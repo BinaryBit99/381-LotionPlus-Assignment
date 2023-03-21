@@ -2,18 +2,20 @@
 
 import json
 import boto3
+from boto3.dynamodb.conditions import Key
 
 dynamodb_resource = boto3.resource("dynamodb")
 table = dynamodb_resource.Table("lotion-30146985")
 
 def get_handler(event, context):
-    body = event["body"]
+    queryParameter = event["queryStringParameters"]
     try:
-        table.query(KeyConditionExpression=Key("email").eq(body["email"]))
+        res = table.query(KeyConditionExpression=Key("email").eq(queryParameter["email"]))
         return {
             "statusCode": 200,
                 "body": json.dumps({
-                    "message": "success"
+                    "message": "success",
+                    "notes": res
                 })
         }
     except Exception as exp:

@@ -12,18 +12,39 @@ function Layout() {
   const navigate = useNavigate();
   const LOCAL_STORAGE_KEY = "notesApp.notes";
   const params = useParams();
-  const [notes, setNotes] = useState(() => {
+  const [notes, setNotes] = useState(retrieveNotes);
+  const [lockedbar, setLockedbar] = useState(false);
+  const [sidebar, setSidebar] = useState(false);
+  function showSidebar() {
+    lockedbar ? (sidebar ? setSidebar(false) : setSidebar(false)) : setSidebar(!sidebar) ;
+  }
+
+  async function retrieveNotes() {
+
     const storedNotes = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY));
     if (storedNotes === null) {
       return [];
     } else {
       return storedNotes;
     }
-  });
-  const [lockedbar, setLockedbar] = useState(false);
-  const [sidebar, setSidebar] = useState(false);
-  function showSidebar() {
-    lockedbar ? (sidebar ? setSidebar(false) : setSidebar(false)) : setSidebar(!sidebar) ;
+    // const res = await fetch(`https://ghszrazwk3juwqtg4m2jdhnvgu0rxjyc.lambda-url.ca-central-1.on.aws?email=${"batman@uofc.ca"}`, 
+    //   {
+    //     method: "GET",
+    //     mode: "cors",
+    //     headers: {
+    //       "Content-Type": "application/json"
+    //     }
+    //   }
+    // )
+
+    // const jsonRes = await res.json()
+    // const retrievedNotes = jsonRes.notes.Items
+    // if (retrievedNotes == []) {
+    //   return [];
+    // } else {
+    //   return retrievedNotes;
+    // }
+  
   }
 
   //   const res = await fetch("https://fgaeb676p2fzzzfxz3r43oj3cq0mmkmr.lambda-url.ca-central-1.on.aws/", 
@@ -42,11 +63,8 @@ function Layout() {
   async function addNote() {
     const id = uuidv4();
     const newNote = { id: id, title: "Untitled", text: "...", date: "" };
-    setNotes((prevNotes) => {
-      return [...prevNotes, newNote];
-    });
 
-    const res = await fetch("https://lhsm33sa5oaklh5w5juvv2jfji0ygaut.lambda-url.ca-central-1.on.aws/", 
+    const res = await fetch("https://t6tmufd7d6v5jdva4s2pa7rsfe0mznte.lambda-url.ca-central-1.on.aws/", 
       {
         method: "POST",
         mode: "cors",
@@ -56,23 +74,14 @@ function Layout() {
         body: JSON.stringify({...newNote, email: "batman@uofc.ca"})
       }
     )
-
     console.log(res)
 
-    const res2 = await fetch("https://g2b5lxtqym345srmsunyc3d2hi0uzazj.lambda-url.ca-central-1.on.aws/", 
-      {
-        method: "GET",
-        mode: "cors",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({email: "batman@uofc.ca"})
-      }
-    )
-
-    console.log(res2)
-
-    navigate("notes/" + id + "/edit");
+    if(res.status == 200) {
+      setNotes((prevNotes) => {
+        return [...prevNotes, newNote];
+      });
+      navigate("notes/" + id + "/edit");
+    }
   }
   
 
