@@ -15,9 +15,9 @@ provider "aws" {
 # the locals block is used to declare constants that 
 # you can use throughout your code
 locals {
-  delete_function_name = "delete"
-  save_function_name = "save"
-  get_function_name = "get"
+  delete_function_name = "delete-note-30147741"
+  save_function_name = "save-note-30147741"
+  get_function_name = "get-notes-30147741"
 
   delete_note_handler_name  = "main.delete_handler"
   get_notes_handler_name = "main.get_handler"
@@ -60,8 +60,8 @@ EOF
 }
 
 # read the docs: https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/dynamodb_table
-resource "aws_dynamodb_table" "table-30146985" {
-  name         = "lotion"
+resource "aws_dynamodb_table" "lotion-30146985" {
+  name         = "lotion-30146985"
   billing_mode = "PROVISIONED"
 
   # up to 8KB read per second (eventually consistent)
@@ -161,11 +161,11 @@ resource "aws_iam_policy" "logs-and-dynamodb" {
         "logs:CreateLogStream",
         "logs:PutLogEvents",
         "dynamodb:PutItem",
-        "dynamodb:Get*",
+        "dynamodb:Query",
         "dynamodb:DeleteItem",
         "dynamodb:UpdateItem"
       ],
-      "Resource": ["arn:aws:logs:*:*:*", "${aws_dynamodb_table.table-30146985.arn}"],
+      "Resource": ["arn:aws:logs:*:*:*", "${aws_dynamodb_table.lotion-30146985.arn}"],
       "Effect": "Allow"
     }
   ]
@@ -189,7 +189,7 @@ resource "aws_lambda_function_url" "save-url" {
   cors {
     allow_credentials = true
     allow_origins     = ["*"]
-    allow_methods     = ["POST", "PUT"]
+    allow_methods     = ["POST"]
     allow_headers     = ["*"]
     expose_headers    = ["keep-alive", "date"] #Can be empty array
   }

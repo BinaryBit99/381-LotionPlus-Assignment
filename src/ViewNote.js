@@ -12,13 +12,27 @@ export default function ViewNote() {
       curNote = notes[note];
     }
   }
-  function handleDelete() {
+  async function handleDelete() {
     const answer = window.confirm("Are you sure?");
     if (answer) {
       notes = notes.filter((note) => note.id !== id);
       setNotes(notes);
       navigate("/notes/");
+
+      const res = await fetch("https://tcqizbv2ojmo2fuz2pzyxejrbi0pwvot.lambda-url.ca-central-1.on.aws/", 
+        {
+          method: "DELETE",
+          mode: "cors",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({id: id, email: "batman@uofc.ca"})
+        }
+      )
+      console.log(res)
+
     }
+
   }
 
   return (

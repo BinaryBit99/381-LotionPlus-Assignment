@@ -4,12 +4,13 @@ import json
 import boto3
 
 dynamodb_resource = boto3.resource("dynamodb")
-table = dynamodb_resource.Table("lotion")
+table = dynamodb_resource.Table("lotion-30146985")
 
 def delete_handler(event, context):
-    body = event["body"]
+    body = json.loads(event["body"])
+    print(body)
     try:
-        table.delete_item(Key={"id": body["id"]})
+        table.delete_item(Key=body)
 
         return {
             "statusCode": 200,

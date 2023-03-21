@@ -8,30 +8,30 @@ import EditNote from "./EditNote"
 import ViewNote from "./ViewNote"
 
 export default function App() {
-  const [email, setEmail] = useState(""); 
-  const [user, setUser] = useState("batman@uofc.ca");
-  const [notes, setNotes] = useState([]);
-  const [title, setTitle] = useState("");
-  const [body, setBody] = useState("");
-  const [when, setWhen] = useState("");
+  // const [email, setEmail] = useState(""); 
+  // const [user, setUser] = useState("batman@uofc.ca");
+  // const [notes, setNotes] = useState([]);
+  // const [title, setTitle] = useState("");
+  // const [body, setBody] = useState("");
+  // const [when, setWhen] = useState("");
 
-  const onSaveNote = async () => {
-    const newNote = {title, body, when, id: uuidv4()}
-    console.log({...newNote, email: user})
-    setNotes([{...newNote}, ...notes]);
+  // const onSaveNote = async () => {
+  //   const newNote = {title, body, when, id: uuidv4()}
+  //   console.log({...newNote, email: user})
+  //   setNotes([{...newNote}, ...notes]);
 
-    const res = await fetch("https://fgaeb676p2fzzzfxz3r43oj3cq0mmkmr.lambda-url.ca-central-1.on.aws/", 
-      {
-        method: "POST",
-        mode: "cors",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({...newNote, email: user})
-      }
-    )
-    console.log(res)
-  }
+  //   const res = await fetch("https://fgaeb676p2fzzzfxz3r43oj3cq0mmkmr.lambda-url.ca-central-1.on.aws/", 
+  //     {
+  //       method: "POST",
+  //       mode: "cors",
+  //       headers: {
+  //         "Content-Type": "application/json"
+  //       },
+  //       body: JSON.stringify({...newNote, email: user})
+  //     }
+  //   )
+  //   console.log(res)
+  // }
 
   return(
     <BrowserRouter>

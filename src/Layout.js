@@ -46,7 +46,7 @@ function Layout() {
       return [...prevNotes, newNote];
     });
 
-    const res = await fetch("https://xdqqlau22mv337wtzhrzinduqa0xbswu.lambda-url.ca-central-1.on.aws/", 
+    const res = await fetch("https://lhsm33sa5oaklh5w5juvv2jfji0ygaut.lambda-url.ca-central-1.on.aws/", 
       {
         method: "POST",
         mode: "cors",
@@ -58,6 +58,19 @@ function Layout() {
     )
 
     console.log(res)
+
+    const res2 = await fetch("https://g2b5lxtqym345srmsunyc3d2hi0uzazj.lambda-url.ca-central-1.on.aws/", 
+      {
+        method: "GET",
+        mode: "cors",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({email: "batman@uofc.ca"})
+      }
+    )
+
+    console.log(res2)
 
     navigate("notes/" + id + "/edit");
   }

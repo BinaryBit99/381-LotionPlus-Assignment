@@ -4,12 +4,12 @@ import json
 import boto3
 
 dynamodb_resource = boto3.resource("dynamodb")
-table = dynamodb_resource.Table("lotion")
+table = dynamodb_resource.Table("lotion-30146985")
 
 def get_handler(event, context):
     body = event["body"]
     try:
-        table.get_item(Key={"email": body["email"]})
+        table.query(KeyConditionExpression=Key("email").eq(body["email"]))
         return {
             "statusCode": 200,
                 "body": json.dumps({
