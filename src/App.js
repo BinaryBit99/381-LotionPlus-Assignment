@@ -31,7 +31,7 @@ export default function App() {
     <BrowserRouter>
       <Routes>
         <Route element={<Layout />}>
-          <Route path="/"></Route>
+          <Route path="/" element={<div></div>}></Route>
           <Route path="/notes" element={
             <div className="noneSelected">
               Select a note, or create a new one.

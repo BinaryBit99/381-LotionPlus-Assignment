@@ -5,7 +5,7 @@ import "react-quill/dist/quill.snow.css";
 
 export default function EditNote() {
   const id = useParams().noteID;
-  var [notes, setNotes] = useOutletContext();
+  var [notes, setNotes, profile, user] = useOutletContext();
   const LOCAL_STORAGE_KEY = "notesApp.notes";
   const navigate = useNavigate();
   var curNote;
@@ -49,7 +49,7 @@ export default function EditNote() {
     const answer = window.confirm("Are you sure?");
     if (answer) {
 
-      const res = await fetch(`https://5mxgpu73xqbgivscagw733qhyq0lzbdy.lambda-url.ca-central-1.on.aws?id=${id}&email=${"batman@uofc.ca"}`, 
+      const res = await fetch(`https://5mxgpu73xqbgivscagw733qhyq0lzbdy.lambda-url.ca-central-1.on.aws?id=${id}&email=${profile.email}`, 
         {
           method: "DELETE",
           mode: "cors",
@@ -80,12 +80,15 @@ export default function EditNote() {
         method: "POST",
         mode: "cors",
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
+          "Email": `${profile.email}`,
+          "Authorization": `Bearer ${user.access_token}`
         },
-        body: JSON.stringify({...savedNote, email: "batman@uofc.ca"})
+        body: JSON.stringify({...savedNote, email: profile.email})
         
       }
     )
+    // Authorization: `Bearer ${user.access_token}`,
     console.log(res)
 
     if(res.status == 200) {

@@ -90,7 +90,9 @@ a {
   font-size:x-large;
   font-weight: bold;
   z-index: 100;
+  display: flex;
  }
+ 
 
 #addNote {
   cursor: pointer;
@@ -272,4 +274,42 @@ hr {
   top: 45px;
   height: 43px;
   overflow: hidden;
+}
+
+#userLogin {
+  font-size:small;
+  /* position:fixed; */
+  /* left: 600px;
+  top: -375px; */
+  padding-bottom: 0px;
+  margin-bottom: 0px;
+  padding-bottom: 10px;
+
+}
+
+#signIn {
+  /* position:relative; */
+  /* right: 550px;
+  top: 400px; */
+  outline:none;
+  border: none;
+  background-color: white;
+  margin-top: 8px;
+  
+}
+
+#signIn:hover {
+  background-color: rgb(60, 47, 80);
+  color: white;
+  border-radius: 12px;
+}
+
+.welcome {
+  text-align: center;
+}
+
+#logOutButton:hover {
+  background-color: rgb(60, 47, 80);
+  color: white;
+  border-radius: 12px;
 }

@@ -3,7 +3,7 @@ import { useParams, useNavigate, useOutletContext } from "react-router-dom";
 
 export default function ViewNote() {
   const id = useParams().noteID;
-  var [notes, setNotes] = useOutletContext();
+  var [notes, setNotes, profile] = useOutletContext();
   const navigate = useNavigate();
   var curNote;
 
@@ -16,7 +16,7 @@ export default function ViewNote() {
     const answer = window.confirm("Are you sure?");
     if (answer) {
 
-      const res = await fetch(`https://5mxgpu73xqbgivscagw733qhyq0lzbdy.lambda-url.ca-central-1.on.aws?id=${id}&email=${"batman@uofc.ca"}`, 
+      const res = await fetch(`https://5mxgpu73xqbgivscagw733qhyq0lzbdy.lambda-url.ca-central-1.on.aws?id=${id}&email=${profile.email}`, 
         {
           method: "DELETE",
           mode: "cors",
@@ -33,22 +33,19 @@ export default function ViewNote() {
         navigate("/notes/");
       }
 
-      const res2 = await fetch(`https://ghszrazwk3juwqtg4m2jdhnvgu0rxjyc.lambda-url.ca-central-1.on.aws?email=${"batman@uofc.ca"}`, 
-        {
-          method: "GET",
-          mode: "cors",
-          headers: {
-            "Content-Type": "application/json"
-          }
-        }
-      )
-
-      const jsonRes = await res2.json()
-      console.log(jsonRes.notes.Items)
-
     }
 
   }
+
+
+  if(curNote === null || curNote === undefined) {
+    return (
+      <div className="noneSelected">
+        Select a note, or create a new one.
+      </div>
+    );
+  }
+
 
   return (
     <div id="metaNote">

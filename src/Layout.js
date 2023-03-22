@@ -12,38 +12,35 @@ function Layout() {
   const navigate = useNavigate();
   const LOCAL_STORAGE_KEY = "notesApp.notes";
   const params = useParams();
-  const [notes, setNotes] = useState(retrieveNotes);
-  const [lockedbar, setLockedbar] = useState(false);
+  const [notes, setNotes] = useState([]);
+  const [lockedbar, setLockedbar] = useState(true);
   const [sidebar, setSidebar] = useState(false);
   function showSidebar() {
     lockedbar ? (sidebar ? setSidebar(false) : setSidebar(false)) : setSidebar(!sidebar) ;
   }
 
+
+
   async function retrieveNotes() {
 
-    const storedNotes = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY));
-    if (storedNotes === null) {
-      return [];
-    } else {
-      return storedNotes;
-    }
-    // const res = await fetch(`https://ghszrazwk3juwqtg4m2jdhnvgu0rxjyc.lambda-url.ca-central-1.on.aws?email=${"batman@uofc.ca"}`, 
-    //   {
-    //     method: "GET",
-    //     mode: "cors",
-    //     headers: {
-    //       "Content-Type": "application/json"
-    //     }
-    //   }
-    // )
+    const res = await fetch(`https://ghszrazwk3juwqtg4m2jdhnvgu0rxjyc.lambda-url.ca-central-1.on.aws?email=${profile.email}`, 
+      {
+        method: "GET",
+        mode: "cors",
+        headers: {
+          "Content-Type": "application/json"
+        }
+      }
+    )
 
-    // const jsonRes = await res.json()
-    // const retrievedNotes = jsonRes.notes.Items
-    // if (retrievedNotes == []) {
-    //   return [];
-    // } else {
-    //   return retrievedNotes;
-    // }
+    console.log(res)
+    const jsonRes = await res.json()
+    const retrievedNotes = jsonRes.notes.Items
+    if (retrievedNotes == []) {
+      setNotes([]);
+    } else {
+      setNotes(retrievedNotes);
+    }
   
   }
 
@@ -64,16 +61,21 @@ function Layout() {
     const id = uuidv4();
     const newNote = { id: id, title: "Untitled", text: "...", date: "" };
 
+    console.log(profile.email)
+
     const res = await fetch("https://t6tmufd7d6v5jdva4s2pa7rsfe0mznte.lambda-url.ca-central-1.on.aws/", 
       {
         method: "POST",
         mode: "cors",
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
+          "email": `${profile.email}`,
+          "authorization": `Bearer ${user.access_token}`
         },
-        body: JSON.stringify({...newNote, email: "batman@uofc.ca"})
+        body: JSON.stringify({...newNote, email: profile.email})
       }
     )
+        // Authorization: `Bearer ${user.access_token}`,
     console.log(res)
 
     if(res.status == 200) {
@@ -92,20 +94,30 @@ function Layout() {
       navigate("/notes");
     }
   }, []);
+
   useEffect(() => {
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(notes));
   }, [notes]);
-  const [ user, setUser ] = useState([]);
-  const [ profile, setProfile ] = useState([]);
+
+  const [ user, setUser ] = useState(null);
+  const [ profile, setProfile ] = useState(null);
+
+  useEffect(() => {
+    if(profile) {
+      retrieveNotes();
+    }
+  }, [profile])
+
   const login = useGoogleLogin({
       onSuccess: (codeResponse) => setUser(codeResponse),
       onError: (error) => console.log('Login Failed:', error),
   });
-  useEffect ( 
-    () => {
-      <Outlet context={[lockedbar, setLockedbar]} /> 
-    }, [ lockedbar ]
-  )
+
+  useEffect (() => {
+    <Outlet context={[lockedbar, setLockedbar]} /> 
+  }, [ lockedbar ]);
+
+
   useEffect(
     () => {
         if (user) {
@@ -138,6 +150,8 @@ function Layout() {
     navigate("/");
     logOut();
   }
+
+  console.log(user? user.access_token : "not there")
   return (
     <>
       <div id="title">
@@ -145,12 +159,12 @@ function Layout() {
         <p>Like Notion, but worse (like way worse)</p>
       </div>
       <label id="menu" onClick={showSidebar} >
-        &#9776;
+        &#9776; &nbsp; 
         <div id="userLogin">
         {profile ? (
                 <div className="welcome">
                     <p> Welcome back, {profile.name}</p>
-                    <label onClick={handleLogOut}>Log out</label>
+                    <label id="logOutButton" onClick={handleLogOut}>&nbsp;Log out&nbsp;</label>
                 </div>
             ) : (
                 <button id="signIn" onClick={reDirect}>Sign in with Google</button>
@@ -168,7 +182,7 @@ function Layout() {
         </div>
       </nav>
       <div className={sidebar ? "content menuActive" : "content"}>
-        <Outlet context={[notes, setNotes]} />
+        <Outlet context={[notes, setNotes, profile, user]} />
       </div>
     </>
   );
