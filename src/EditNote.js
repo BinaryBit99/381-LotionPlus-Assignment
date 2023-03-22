@@ -54,8 +54,10 @@ export default function EditNote() {
           method: "DELETE",
           mode: "cors",
           headers: {
-            "Content-Type": "application/json"
-          },
+            "Content-Type": "application/json",
+            "email": `${profile.email}`,
+            "authorization": `Bearer ${user.access_token}`
+          }
         }
       )
 
@@ -81,8 +83,8 @@ export default function EditNote() {
         mode: "cors",
         headers: {
           "Content-Type": "application/json",
-          "Email": `${profile.email}`,
-          "Authorization": `Bearer ${user.access_token}`
+          "email": `${profile.email}`,
+          "authorization": `Bearer ${user.access_token}`
         },
         body: JSON.stringify({...savedNote, email: profile.email})
         

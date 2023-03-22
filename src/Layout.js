@@ -28,7 +28,9 @@ function Layout() {
         method: "GET",
         mode: "cors",
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
+          "email": `${profile.email}`,
+          "authorization": `Bearer ${user.access_token}`
         }
       }
     )
@@ -60,8 +62,6 @@ function Layout() {
   async function addNote() {
     const id = uuidv4();
     const newNote = { id: id, title: "Untitled", text: "...", date: "" };
-
-    console.log(profile.email)
 
     const res = await fetch("https://t6tmufd7d6v5jdva4s2pa7rsfe0mznte.lambda-url.ca-central-1.on.aws/", 
       {
@@ -151,7 +151,6 @@ function Layout() {
     logOut();
   }
 
-  console.log(user? user.access_token : "not there")
   return (
     <>
       <div id="title">

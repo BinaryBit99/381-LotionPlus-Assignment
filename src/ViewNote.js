@@ -3,7 +3,7 @@ import { useParams, useNavigate, useOutletContext } from "react-router-dom";
 
 export default function ViewNote() {
   const id = useParams().noteID;
-  var [notes, setNotes, profile] = useOutletContext();
+  var [notes, setNotes, profile, user] = useOutletContext();
   const navigate = useNavigate();
   var curNote;
 
@@ -21,7 +21,9 @@ export default function ViewNote() {
           method: "DELETE",
           mode: "cors",
           headers: {
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
+            "email": `${profile.email}`,
+            "authorization": `Bearer ${user.access_token}`
           },
         }
       )
