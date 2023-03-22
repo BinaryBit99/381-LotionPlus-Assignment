@@ -26,14 +26,7 @@ locals {
   get_artifact_name = "artifact-get.zip"
   save_artifact_name = "artifact-save.zip"
   delete_artifact_name = "artifact-delete.zip"
-
-#   artifact_name = "${local.function_name}/artifact.zip"
 }
-
-# Create an S3 bucket
-# if you omit the name, Terraform will assign a random name to it
-# see the docs: https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket
-# resource "aws_s3_bucket" "lambda" {}
 
 # create a role for the Lambda function to assume
 # every service on AWS that wants to call other AWS services should first assume a role and
@@ -70,12 +63,9 @@ resource "aws_dynamodb_table" "lotion-30146985" {
   # up to 1KB per second
   write_capacity = 1
 
-  # we only need a student id to find an item in the table; therefore, we 
-  # don't need a sort key here
   hash_key = "email"
   range_key = "id"
 
-  # the hash_key data type is string
   attribute {
     name = "email"
     type = "S"
@@ -90,24 +80,18 @@ resource "aws_dynamodb_table" "lotion-30146985" {
 # create archive file from main.py
 data "archive_file" "get-archive" {
   type = "zip"
-  # this file (main.py) needs to exist in the same folder as this 
-  # Terraform configuration file
   source_file = "../functions/get-notes/main.py" 
   output_path = "artifact-get.zip"
 }
 
 data "archive_file" "save-archive" {
   type = "zip"
-  # this file (main.py) needs to exist in the same folder as this 
-  # Terraform configuration file
   source_file = "../functions/save-note/main.py" 
   output_path = "artifact-save.zip"
 }
 
 data "archive_file" "delete-archive" {
   type = "zip"
-  # this file (main.py) needs to exist in the same folder as this 
-  # Terraform configuration file
   source_file = "../functions/delete-note/main.py" 
   output_path = "artifact-delete.zip"
 }

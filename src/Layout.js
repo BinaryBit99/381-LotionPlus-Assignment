@@ -46,19 +46,6 @@ function Layout() {
   
   }
 
-  //   const res = await fetch("https://fgaeb676p2fzzzfxz3r43oj3cq0mmkmr.lambda-url.ca-central-1.on.aws/", 
-  //     {
-  //       method: "POST",
-  //       mode: "cors",
-  //       headers: {
-  //         "Content-Type": "application/json"
-  //       },
-  //       body: JSON.stringify({...newNote, email: user})
-  //     }
-  //   )
-  //   console.log(res)
-  // }
-
   async function addNote() {
     const id = uuidv4();
     const newNote = { id: id, title: "Untitled", text: "...", date: "" };
@@ -85,9 +72,6 @@ function Layout() {
       navigate("notes/" + id + "/edit");
     }
   }
-  
-
-  // console.log(profile)
 
   useEffect(() => {
     if (Object.keys(params).length === 0){
