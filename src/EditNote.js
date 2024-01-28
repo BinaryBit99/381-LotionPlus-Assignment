@@ -49,7 +49,7 @@ export default function EditNote() {
     const answer = window.confirm("Are you sure?");
     if (answer) {
 
-      const res = await fetch(`https://5mxgpu73xqbgivscagw733qhyq0lzbdy.lambda-url.ca-central-1.on.aws?id=${id}&email=${profile.email}`, 
+      const res = await fetch(`https://vdyfimzt5vzktczljseyyci2pi0tkepy.lambda-url.ca-central-1.on.aws?id=${id}&email=${profile.email}`, 
         {
           method: "DELETE",
           mode: "cors",
@@ -77,7 +77,7 @@ export default function EditNote() {
   async function handleSave() {
     const savedNote = {id: id, title: title, text: value, date: formatDate(date)};
 
-    const res = await fetch("https://t6tmufd7d6v5jdva4s2pa7rsfe0mznte.lambda-url.ca-central-1.on.aws/", 
+    const res = await fetch("https://k5fvv2d7lvwyfukdmnh26mn6t40dogvr.lambda-url.ca-central-1.on.aws/", 
       {
         method: "POST",
         mode: "cors",

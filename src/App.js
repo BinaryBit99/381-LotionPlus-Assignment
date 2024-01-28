@@ -16,7 +16,7 @@ export default function App() {
           <Route path="/" element={<div></div>}></Route>
           <Route path="/notes" element={
             <div className="noneSelected">
-              Sorry, AWS is not connected right now.
+              Select a note, or create a new one.
             </div>
           }></Route>
           <Route path="/notes/:noteID" element={<ViewNote/>}></Route>

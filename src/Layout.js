@@ -23,7 +23,7 @@ function Layout() {
 
   async function retrieveNotes() {
 
-    const res = await fetch(`https://ghszrazwk3juwqtg4m2jdhnvgu0rxjyc.lambda-url.ca-central-1.on.aws?email=${profile.email}`, 
+    const res = await fetch(`https://zlszi4k4xpfte3wivf6ukuwp3y0aonwn.lambda-url.ca-central-1.on.aws?email=${profile.email}`, 
       {
         method: "GET",
         mode: "cors",
@@ -50,7 +50,7 @@ function Layout() {
     const id = uuidv4();
     const newNote = { id: id, title: "Untitled", text: "...", date: "" };
 
-    const res = await fetch("https://t6tmufd7d6v5jdva4s2pa7rsfe0mznte.lambda-url.ca-central-1.on.aws/", 
+    const res = await fetch("https://k5fvv2d7lvwyfukdmnh26mn6t40dogvr.lambda-url.ca-central-1.on.aws/", 
       {
         method: "POST",
         mode: "cors",

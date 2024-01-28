@@ -16,7 +16,7 @@ export default function ViewNote() {
     const answer = window.confirm("Are you sure?");
     if (answer) {
 
-      const res = await fetch(`https://5mxgpu73xqbgivscagw733qhyq0lzbdy.lambda-url.ca-central-1.on.aws?id=${id}&email=${profile.email}`, 
+      const res = await fetch(`https://vdyfimzt5vzktczljseyyci2pi0tkepy.lambda-url.ca-central-1.on.aws?id=${id}&email=${profile.email}`, 
         {
           method: "DELETE",
           mode: "cors",
