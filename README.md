@@ -1,4 +1,5 @@
 # Lotion Plus
+###### Completed by Evan Barker and Karam Baroud
 
 In this assignment, you will create a backend on AWS for the Lotion app you created in a previous assignment. You will use Terraform for creating resources on AWS.
 
